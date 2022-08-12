@@ -1,0 +1,9 @@
+<h1>Hello, {{.Name}} !</h1>
+
+<h2>Dog name {{.Dog.Name}}</h2>
+{{range .Slice}}
+    {{.}}
+{{end}}
+
+<h1>Selamat datang di indo</h1>
+{{template "footer"}}
