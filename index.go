@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	// "html/template"
 
-	// "html/template"
 	"./views"
 
 	"net/http"
@@ -12,17 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// func handlerFunc(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "text/html")
-// 	if r.URL.Path == "/" {
-// 		fmt.Fprint(w, "<h1>Selamat datang di skillplus</h1>")
-// 	} else if r.URL.Path == "/aboutus" {
-// 		fmt.Fprint(w, "<h1>ini adalah web tutorial seputar informasi teknologi</h1>")
-// 	} else {
-// 		fmt.Fprint(w, "<h1>Halaman yang dicari tidak ditemukan</h1>")
-// 		w.WriteHeader(http.StatusNotFound)
-// 	}
-// }
 type Dog struct {
 	Name string
 }
@@ -47,15 +34,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		Dog:   Dog{Name: "Blackie"},
 		Slice: []string{"a", "b"},
 	}
-	if err := homeTpl.Template.Execute(w, data); err != nil {
+	if err := homeTpl.Template.ExecuteTemplate(w, homeTpl.Layout, data); err != nil {
 		panic(err)
 	}
 }
 
 func aboutUsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	// fmt.Fprint(w, "<h1>Ini Adalah testing</h1>")
-	if err := aboutusTpl.Template.Execute(w, nil); err != nil {
+	if err := aboutusTpl.Template.ExecuteTemplate(w, aboutusTpl.Layout, nil); err != nil {
 		panic(err)
 	}
 }
@@ -66,21 +52,8 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// http.HandleFunc("/", handlerFunc)
-	// http.HandleFunc("/aboutus", handlerFunc)
-	// http.ListenAndServe(":3000", nil)
-	// var err error
-	// homeTpl, err = template.ParseFiles("views/index.html", "views/layouts/footer.html")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	homeTpl = views.NewView("views/index.html")
-	aboutusTpl = views.NewView("views/aboutus.html")
-	// aboutusTpl, err = template.ParseFiles("views/aboutus.html", "views/layouts/footer.html")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	homeTpl = views.NewView("bootstrap", "views/index.html")
+	aboutusTpl = views.NewView("bootstrap", "views/aboutus.html")
 	r := mux.NewRouter()
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 	r.HandleFunc("/", homeHandler)
