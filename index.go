@@ -26,6 +26,7 @@ var (
 	// aboutusTpl *template.Template
 	homeTpl    *views.View
 	aboutusTpl *views.View
+	signupTpl  *views.View
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -52,17 +53,28 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>Halaman Tidak Ketemu</h1>")
 }
 
+func signupHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	err := signupTpl.Template.ExecuteTemplate(w, signupTpl.Layout, nil)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	homeTpl = views.NewView("bootstrap", "views/index.html")
 	aboutusTpl = views.NewView("bootstrap", "views/aboutus.html")
+	signupTpl = views.NewView("bootstrap", "views/newuser.html")
 
 	cUser := controllers.NewUser()
 
 	r := mux.NewRouter()
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
-	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/aboutus", aboutUsHandler)
-	r.HandleFunc("/signup", cUser.New)
+	r.HandleFunc("/", homeHandler).Methods("GET")
+	r.HandleFunc("/aboutus", aboutUsHandler).Methods("GET")
+	r.HandleFunc("/signup", cUser.New).Methods("GET")
+
+	r.HandleFunc("/signup", cUser.Create).Methods("POST")
 
 	http.ListenAndServe("localhost:3000", r)
 }
