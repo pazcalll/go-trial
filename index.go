@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 
-	"./views"
-
 	"net/http"
+
+	"./controllers"
+	"./views"
 
 	"github.com/gorilla/mux"
 )
@@ -54,9 +55,14 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	homeTpl = views.NewView("bootstrap", "views/index.html")
 	aboutusTpl = views.NewView("bootstrap", "views/aboutus.html")
+
+	cUser := controllers.NewUser()
+
 	r := mux.NewRouter()
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/aboutus", aboutUsHandler)
+	r.HandleFunc("/signup", cUser.New)
+
 	http.ListenAndServe("localhost:3000", r)
 }
